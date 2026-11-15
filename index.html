@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#e8dcff">
+<meta name="description" content="MOODAY, ton planner personnalisable.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<title>MOODAY</title>
+<style>
+:root{--bg:#f7f3ff;--paper:#fffaff;--ink:#514765;--muted:#9388a8;--pink:#ffdce9;--blue:#dcd3ff;--line:#eee5f5;--radius:22px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Arial,sans-serif}
+header{padding:18px 22px;background:linear-gradient(110deg,var(--pink),var(--blue));display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:27px;font-weight:850;letter-spacing:1px}.tag{font-size:13px;color:#655a78}
+.shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100dvh - 82px)}
+aside{padding:18px 14px;border-right:1px solid var(--line);background:#ffffff80}
+nav{display:grid;gap:8px;position:sticky;top:12px}
+button,input,textarea,select{font:inherit}button{border:0;border-radius:13px;padding:11px 14px;background:var(--blue);color:var(--ink);font-weight:650;cursor:pointer}
+nav button{text-align:left;background:transparent}nav button.active{background:var(--ink);color:white}
+main{width:100%;max-width:1200px;margin:auto;padding:22px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:0 5px 20px #6b56800b}
+h1,h2,h3,p{margin-top:0}h2{font-size:19px;margin-bottom:14px}h3{font-size:15px}
+.muted,.hint{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+input,textarea,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:white;color:var(--ink)}
+textarea{min-height:110px;resize:vertical}.field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;color:var(--muted);font-weight:700}
+.task{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.task:last-child{border:0}.task span{flex:1}.done{text-decoration:line-through;color:var(--muted)}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.weekday{text-align:center;font-size:12px;color:var(--muted);padding:6px 0}
+.day{border:1px solid var(--line);border-radius:12px;padding:8px;min-height:82px;background:white;overflow-wrap:anywhere}.day strong{font-size:13px}.event-dot{display:block;font-size:11px;background:var(--pink);padding:4px 6px;border-radius:8px;margin-top:5px}
+.hidden{display:none!important}.empty{color:var(--muted);font-size:13px;padding:10px 0}.danger{background:#ffe1e8}.secondary{background:white;border:1px solid var(--line)}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
+@media(max-width:720px){.shell{grid-template-columns:1fr}aside{padding:8px 10px;border-right:0;border-bottom:1px solid var(--line)}nav{display:flex;overflow-x:auto;position:static}nav button{white-space:nowrap;text-align:center;padding:10px}main{padding:12px}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.day{min-height:58px;padding:5px}.event-dot{font-size:9px;padding:3px}.calendar{gap:3px}header{padding:14px}.brand{font-size:23px}}
+</style>
+</head>
+<body>
+<header><div><div class="brand">୨୧ MOODAY</div><div class="tag">ton petit espace pour tout organiser ♡</div></div><div>🎀 🩵 🩷</div></header>
+<div class="shell">
+<aside><nav>
+<button class="active" data-page="home" onclick="show('home')">⌂ Accueil</button>
+<button data-page="calendar" onclick="show('calendar')">▦ Calendrier</button>
+<button data-page="tasks" onclick="show('tasks')">☑ To-do list</button>
+<button data-page="notes" onclick="show('notes')">✎ Notes</button>
+<button data-page="settings" onclick="show('settings')">✿ Personnaliser</button>
+</nav></aside>
+<main>
+<section id="home" class="page">
+<div class="panel"><h2 id="welcome">Coucou ! ♡</h2><p class="muted" id="today"></p><p>Bienvenue dans ton planner. Ajoute tes rendez-vous, tes tâches et tes petites idées ici.</p></div>
+<div class="grid">
+<div class="panel"><h2>♡ À faire</h2><div id="homeTasks"></div><button onclick="show('tasks')">Voir ma liste</button></div>
+<div class="panel"><h2>✧ Événements à venir</h2><div id="homeEvents"></div><button onclick="show('calendar')">Ouvrir le calendrier</button></div>
+</div>
+<div class="panel"><h2>Mon mood du jour</h2><div class="row"><button onclick="setMood('🌷')">🌷</button><button onclick="setMood('🫧')">🫧</button><button onclick="setMood('✨')">✨</button><button onclick="setMood('☁️')">☁️</button><strong id="moodValue"></strong></div></div>
+</section>
+<section id="calendar" class="page hidden">
+<div class="panel"><div class="row" style="justify-content:space-between"><h2>Mon calendrier ♡</h2><div class="row"><button class="secondary" onclick="changeMonth(-1)">‹</button><strong id="monthLabel"></strong><button class="secondary" onclick="changeMonth(1)">›</button></div></div><div class="calendar" id="calendarGrid"></div></div>
+<div class="panel"><h2>Ajouter un événement</h2><div class="grid"><div class="field"><label>Titre</label><input id="eventTitle" placeholder="Ex. Réviser le néerlandais"></div><div class="field"><label>Date</label><input id="eventDate" type="date"></div></div><div class="field"><label>Heure (facultatif)</label><input id="eventTime" type="time"></div><button onclick="addEvent()">Ajouter</button><div id="eventList"></div></div>
+</section>
+<section id="tasks" class="page hidden"><div class="panel"><h2>Ma to-do list ୨୧</h2><div class="row"><input id="taskInput" placeholder="Une chose à faire…" onkeydown="if(event.key==='Enter')addTask()"><button onclick="addTask()">Ajouter</button></div><div id="taskList"></div></div></section>
+<section id="notes" class="page hidden"><div class="panel"><h2>Mes notes 🩵</h2><div class="field"><label>Titre</label><input id="noteTitle" placeholder="Le titre de ma note"></div><div class="field"><label>Mon texte</label><textarea id="noteText" placeholder="Écris tes idées ici…"></textarea></div><button onclick="saveNote()">Enregistrer</button><div id="notesList"></div></div></section>
+<section id="settings" class="page hidden">
+<div class="panel"><h2>Personnalise MOODAY 🎀</h2><div class="grid">
+<div class="field"><label>Fond</label><input type="color" id="bgColor" value="#f7f3ff"></div><div class="field"><label>Couleur principale</label><input type="color" id="blueColor" value="#dcd3ff"></div><div class="field"><label>Rose</label><input type="color" id="pinkColor" value="#ffdce9"></div><div class="field"><label>Texte</label><input type="color" id="inkColor" value="#514765"></div></div>
+<div class="field"><label>Ton prénom ou surnom</label><input id="nickname" placeholder="Ex. Star"></div><div class="field"><label>Ambiance</label><select id="decor"><option>🎀 🩵 🩷</option><option>🦋 ☁️ ✨</option><option>🐰 🌷 🧸</option><option>🖤 ⭐ 🎧</option></select></div><button onclick="saveSettings()">Enregistrer mon thème</button></div>
+<div class="panel"><h2>Sauvegarder mes données</h2><p class="hint">Cette version garde les données sur l'appareil utilisé. Utilise Exporter pour transférer une sauvegarde manuellement vers un autre appareil.</p><div class="row"><button class="secondary" onclick="exportData()">Exporter</button><button class="secondary" onclick="$('importFile').click()">Importer</button><input id="importFile" class="hidden" type="file" accept="application/json" onchange="importData(event)"></div></div>
+</section>
+<footer>MOODAY · fait avec ♡ · tes données restent sur ton appareil</footer>
+</main></div>
+<script>
+const $=id=>document.getElementById(id);
+let data=JSON.parse(localStorage.getItem('moodayData')||'{"tasks":[],"events":[],"notes":[],"settings":{},"mood":""}');
+let shown=new Date();
+function persist(){localStorage.setItem('moodayData',JSON.stringify(data));render()}
+function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function show(page){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(page).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='calendar')renderCalendar()}
+function addTask(){let v=$('taskInput').value.trim();if(!v)return;data.tasks.push({id:Date.now(),text:v,done:false});$('taskInput').value='';persist()}
+function toggleTask(id){let t=data.tasks.find(x=>x.id===id);if(t)t.done=!t.done;persist()}
+function deleteTask(id){data.tasks=data.tasks.filter(x=>x.id!==id);persist()}
+function addEvent(){let title=$('eventTitle').value.trim(),date=$('eventDate').value;if(!title||!date)return alert('Ajoute un titre et une date !');data.events.push({id:Date.now(),title,date,time:$('eventTime').value});$('eventTitle').value='';persist()}
+function deleteEvent(id){data.events=data.events.filter(x=>x.id!==id);persist()}
+function saveNote(){let title=$('noteTitle').value.trim()||'Sans titre',text=$('noteText').value.trim();if(!text)return;data.notes.unshift({id:Date.now(),title,text});$('noteTitle').value='';$('noteText').value='';persist()}
+function deleteNote(id){data.notes=data.notes.filter(n=>n.id!==id);persist()}
+function setMood(m){data.mood=m;persist()}
+function changeMonth(n){shown.setMonth(shown.getMonth()+n);renderCalendar()}
+function renderCalendar(){let y=shown.getFullYear(),m=shown.getMonth();$('monthLabel').textContent=new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(shown);let offset=(new Date(y,m,1).getDay()+6)%7,days=new Date(y,m+1,0).getDate();let h=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(x=>`<div class="weekday">${x}</div>`).join('');for(let i=0;i<offset;i++)h+='<div></div>';for(let d=1;d<=days;d++){let ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,ev=data.events.filter(e=>e.date===ds);h+=`<div class="day"><strong>${d}</strong>${ev.map(e=>`<span class="event-dot">${safe(e.title)}</span>`).join('')}</div>`}$('calendarGrid').innerHTML=h;$('eventDate').value=$('eventDate').value||new Date().toISOString().slice(0,10);$('eventList').innerHTML=data.events.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(e=>`<div class="task"><span><b>${safe(e.title)}</b><br><small>${e.date} ${e.time||''}</small></span><button class="danger" onclick="deleteEvent(${e.id})">×</button></div>`).join('')||'<p class="empty">Aucun événement pour le moment.</p>'}
+function render(){$('taskList').innerHTML=data.tasks.map(t=>`<div class="task"><input style="width:auto" type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id})"><span class="${t.done?'done':''}">${safe(t.text)}</span><button class="danger" onclick="deleteTask(${t.id})">×</button></div>`).join('')||'<p class="empty">Ta liste est vide. Ajoute ta première tâche !</p>';$('homeTasks').innerHTML=data.tasks.filter(t=>!t.done).slice(0,4).map(t=>`<div class="task"><span>${safe(t.text)}</span></div>`).join('')||'<p class="empty">Tout est fait ! ✨</p>';$('homeEvents').innerHTML=data.events.slice().sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4).map(e=>`<div class="task"><span>${safe(e.title)}<br><small>${e.date}</small></span></div>`).join('')||'<p class="empty">Aucun événement prévu.</p>';$('notesList').innerHTML=data.notes.map(n=>`<div class="panel"><div class="row" style="justify-content:space-between"><b>${safe(n.title)}</b><button class="danger" onclick="deleteNote(${n.id})">Supprimer</button></div><p>${safe(n.text).replace(/\n/g,'<br>')}</p></div>`).join('')||'<p class="empty">Tes notes apparaîtront ici.</p>';$('moodValue').textContent=data.mood||'';$('today').textContent=new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());$('welcome').textContent=`Coucou${data.settings.nickname?' '+data.settings.nickname:''} ! ♡`;if(!$('calendar').classList.contains('hidden'))renderCalendar()}
+function saveSettings(){data.settings={bg:$('bgColor').value,blue:$('blueColor').value,pink:$('pinkColor').value,ink:$('inkColor').value,nickname:$('nickname').value,decor:$('decor').value};applySettings();persist()}
+function applySettings(){let s=data.settings||{},r=document.documentElement.style;[['bg','--bg'],['blue','--blue'],['pink','--pink'],['ink','--ink']].forEach(([k,v])=>{if(s[k])r.setProperty(v,s[k])});if(s.bg)$('bgColor').value=s.bg;if(s.blue)$('blueColor').value=s.blue;if(s.pink)$('pinkColor').value=s.pink;if(s.ink)$('inkColor').value=s.ink;if(s.nickname!==undefined)$('nickname').value=s.nickname;if(s.decor)$('decor').value=s.decor}
+function exportData(){let a=document.createElement('a'),b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});a.href=URL.createObjectURL(b);a.download='mooday-sauvegarde.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{data=JSON.parse(r.result);persist();applySettings();alert('Sauvegarde importée !')}catch{alert('Fichier invalide')}};r.readAsText(f)}
+applySettings();render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
